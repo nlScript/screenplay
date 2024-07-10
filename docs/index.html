@@ -1,0 +1,351 @@
+<article class="markdown-body">
+<p><link href='https://fonts.googleapis.com/css?family=Caveat' rel='stylesheet'><br />
+<link rel="stylesheet" href="github-markdown.css"><br />
+<link rel="stylesheet" href="projects.css"><br />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/intellij-light.min.css"></p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<script>
+function showDialog(id) {
+  document.getElementById(id).showModal();
+  document.documentElement.style.overflowY = 'hidden';
+  return false; // to disable href
+}
+
+function hideDialog(id)  {
+  document.getElementById(id).close();
+  document.documentElement.style.overflowY = '';
+  return false; // to disable href
+}
+</script>
+<style>
+.markdown-body h1 {
+  font-family: 'Caveat';
+  font-size: 40;
+  background-color: #183d3d;
+  color: white;
+  padding: 40px;
+  max-width: 800px;
+}
+
+.markdown-body h2 {
+  margin-top: 3em;
+}
+
+.markdown-body img {
+  margin: 50px;
+}
+
+/*
+table {
+  width:100%;
+}
+table td {
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+*/
+
+dialog {
+  max-width: 800px;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+  border-width: 0px;
+  box-shadow: 0px 0px 15px;
+}
+
+dialog::backdrop {
+  background-color: #000000a0;
+}
+
+details summary {
+  display: block;
+}
+
+.content {
+  background-color: #f5f5f5;
+  margin: 1em;
+  margin-right: 0px;
+  padding: 10px;
+  /* padding-bottom: 1px; */
+  font-size: smaller;
+  border-radius: 5px;
+}
+
+@keyframes details-show {
+  from {
+    opacity:0;
+    transform: var(--details-translate, translateY(-0.5em));
+  }
+}
+
+details[open] > *:not(summary) {
+  animation: details-show 150ms ease-in-out;
+}
+
+/*
+table th:first-of-type {
+  width:20%
+}
+table th:nth-of-type(2) {
+  width:10%
+}
+table th:nth-of-type(3) {
+  width:40%
+}
+table th:nth-of-type(4) {
+  width:30%
+}
+*/
+
+</style>
+<h1 id="screenplay">Screenplay</h1>
+<h2 id="motivation">Motivation</h2>
+<p>Screen casts are a popular way to demonstrate and teach new software. However, creating them can be tedious. Typically one needs to practice a couple of times before obtaining the desired result. Even then, it might happen that you do a wrong click, you forget some steps, or an OS message pops up, and you need to start over again.</p>
+<p>Then with every software update that changes the software's user interface, screencasts should be be re-created, so that they are in sync with the current software version, to not confuse users, and to not feel outdated.</p>
+<p>This is where Screenplay trys to help:</p>
+<ul>
+<li><p>It creates screen captures automatically based on instructions given in natural English language</p></li>
+<li><p>It features plenty of UI automation functions, like moving the mouse pointer, clicking, entering text, activating windows, sizing windows, etc (see below).</p></li>
+<li><p>Instructions don't need to be remembered. Intuitive user input is supported by auto-completion (e.g., click coordinates can be picked visually with the mouse pointer).</p></li>
+<li><p>It has a so-called validation mode, to update mouse positions to create a cast on a changed/different screen configuration.</p></li>
+</ul>
+<h2 id="example-open-a-website">Example: Open a website</h2>
+<pre><code class="hljs text language-text">Start recording the primary screen.
+Wait for 2 second(s).
+
+// Click on the Firefox icon in the taskbar
+Mouse click left at (512, 1062) on the Firefox icon.
+
+// Wait until Firefox is open
+Wait for window &#x27;Mozilla Firefox&#x27;.
+
+// Visit a website
+Enter &#x27;https://youtu.be/PKXRzivIRfM&#x27;, &lt;ENTER&gt;.
+
+Wait for 2 second(s).
+Stop recording.</code></pre>
+<video style="margin: auto; display: block;" width="800" controls>
+  <source src="videos/video-01.mp4" type="video/mp4">
+</video>
+<h2 id="making-of">Making of</h2>
+<p>Below is a video that demonstrates how to use Screenplay to create the above screen recording. It also demonstrates Screenplay's autocompletion features, which</p>
+<ul>
+<li>automatically shows available options in the editor</li>
+<li>allows to enter cursor coordinates, e.g. for a mouse click, by moving the cursor to the corresponding position and pressing <code>F2</code></li>
+<li>allows to enter key combinations just by pressing them in the editor</li>
+<li>and many more</li>
+</ul>
+<p>So overall, we have created a screen recording using Screenplay, showing how to create a screen recording using Screenplay.</p>
+<video style="margin: auto; display: block;" width="800" controls>
+  <source src="videos/video-02.mp4" type="video/mp4">
+</video>
+<h2 id="validating-mouse-coordinates">Validating mouse coordinates</h2>
+<p>A key benefit of Screenplay is the ease with wich screen recordings can be re-created. This is particularly useful if the software illustrated in the recording has been updated with a new user interface.</p>
+<p>Recorded cursor positions, however, will in general change over time, for various reasons: The icon arrangement in the taskbar might have changed because new programs have been installed, the screen resolution might have changed due to a new monitor, etc.</p>
+<p>To address this, Screenplay features a validation mode. To invoke it, use <code>Validate</code> instead of <code>Run</code> from the <code>Run</code> menu. This runs the script (with increased speed, and without recording or speech), and stops right before executing any mouse pointer action, allowing the user to update its coordinates.</p>
+<p>The video below demonstrates this, using the sample recording from above:</p>
+<video style="margin: auto; display: block;" width="800" controls>
+  <source src="videos/video-03.mp4" type="video/mp4">
+</video>
+<h2 id="commands">Commands</h2>
+<div>
+
+<details>
+<summary><code>Mouse click &lt;left | middle | right&gt; at (&lt;x&gt;, &lt;y&gt;) &lt;purpose&gt;.</code></summary>
+<div class="content">
+Moves the mouse to the specified screen coordinates and simulates a mouse click with the specified button. <code>&lt;purpose&gt;</code> is optional and specifies the purpose for the mouse click.
+</div>
+</details>
+
+<details>
+<summary><code>Mouse double-click &lt;left | middle | right&gt; at (&lt;x&gt;, &lt;y&gt;) &lt;purpose&gt;.</code></summary>
+<div class="content">
+Moves the mouse to the specified screen coordinates and simulates a mouse double-click with the specified button. <code>&lt;purpose&gt;</code> is optional and specifies the purpose for the mouse click.
+</div>
+</details>
+
+<details>
+<summary><code>Mouse press &lt;left | middle | right&gt; at (&lt;x&gt;, &lt;y&gt;) &lt;purpose&gt;.</code></summary>
+<div class="content">
+Moves the mouse to the specified screen coordinates and simulates a mouse press event with the specified button. <code>&lt;purpose&gt;</code> is optional and specifies the purpose for the mouse press.
+</div>
+</details>
+
+<details>
+<summary><code>Mouse release &lt;left | middle | right&gt; at (&lt;x&gt;, &lt;y&gt;) &lt;purpose&gt;.</code></summary>
+<div class="content">
+Moves the mouse to the specified screen coordinates and simulates a mouse release event with the specified button. <code>&lt;purpose&gt;</code> is optional and specifies the purpose for the mouse release.
+</div>
+</details>
+
+<details>
+<summary><code>Mouse move to (&lt;x&gt;, &lt;y&gt;) &lt;purpose&gt;.</code></summary>
+<div class="content">
+Moves the mouse to the specified screen coordinates. <code>&lt;purpose&gt;</code> is optional and specifies the purpose for the mouse move.
+</div>
+</details>
+
+<details>
+<summary><code>Mouse move along coordinates (&lt;x1&gt;, &lt;y1&gt;), (&lt;x2&gt;, &lt;y2&gt;), ..., (&lt;xn&gt;, &lt;yn&gt;).</code></summary>
+<div class="content">
+Moves the mouse along a smooth curve through the specified screen coordinates.
+</div>
+</details>
+
+<details>
+<summary><code>Mouse drag &lt;left | middle | right&gt; along coordinates (&lt;x1&gt;, &lt;y1&gt;), (&lt;x2&gt;, &lt;y2&gt;), ..., (&lt;xn&gt;, &lt;yn&gt;).</code></summary>
+<div class="content">
+Drags the mouse along a smooth curve through the specified screen coordinates, keeping the specified mouse button pressed.
+</div>
+</details>
+
+<details>
+<summary><code>Mouse scroll by &lt;n&gt; tick(s).</code></summary>
+<div class="content">
+Simulates a mouse scroll event by the specified number of ticks.
+</div>
+</details>
+
+<details>
+<summary><code>Enter ['text1' | &lt;keystroke1&gt;], ['text2' | &lt;keystroke2&gt;], ... .</code></summary>
+<div class="content">
+Enters either a text (enclosed in single quotes) or a keystroke, or a mixed sequence of both. Keystrokes will also be shown visually.
+</div>
+</details>
+
+<details>
+<summary><code>Press key &lt;keystroke&gt;.</code></summary>
+<div class="content">
+Simulates a key press event.
+</div>
+</details>
+
+<details>
+<summary><code>Release key &lt;keystroke&gt;.</code></summary>
+<div class="content">
+Simulates a key release event.
+</div>
+</details>
+
+<details>
+<summary><code>// &lt;comment&gt;</code></summary>
+<div class="content">
+A line starting with <code>//</code> represents a script comment and will be ignored during execution.
+</div>
+</details>
+
+<details>
+<summary><code>[message]</code></summary>
+<div class="content">
+<p>Text surrounded by <code>[</code> and <code>]</code> is interpreted as a message and will be shown on screen, while execution is paused, for 70 milliseconds per character.</p>
+<p>The appearance of messages can be configured using the <code>Messages</code> menu.</p>
+<p>Messages can span multiple lines; line breaks will be preserved.</p>
+</div>
+</details>
+
+<details>
+<summary><code>Pause.</code></summary>
+<div class="content">
+Pauses execution for 1 second.
+</div>
+</details>
+
+<details>
+<summary><code>Wait for &lt;n&gt; second(s).</code></summary>
+<div class="content">
+Pauses execution for n second.
+</div>
+</details>
+
+<details>
+<summary><code>Wait for window 'window-title'.</code></summary>
+<div class="content">
+Waits, if necessary, for a window with the specified title, and activates it.
+</div>
+</details>
+
+<details>
+<summary><code>Position the window 'window-title' &lt;width&gt; x &lt;height&gt; at (&lt;x&gt;, &lt;y&gt;).</code></summary>
+<div class="content">
+Arranges the window with the specified title at the given position and resizes it to the given dimensions.
+</div>
+</details>
+
+<details>
+<summary><code>Activate the window 'window-title'.</code></summary>
+<div class="content">
+Activates the window with the specified title, i.e. brings it into foreground so that it receives user input.
+</div>
+</details>
+
+<details>
+<summary><code>Set the state of the window 'window-title' to [normal | maximized | minimized].</code></summary>
+<div class="content">
+Maximizes or minimizes the window with the specified title, or restores its normal size.
+</div>
+</details>
+
+<details>
+<summary><code>Speak "text-to-speak-out-loud".</code></summary>
+<div class="content">
+Speaks the given text, enclosed in quotation marks, out loudly, using MS Windows speech synthesis.
+</div>
+</details>
+
+<details>
+<summary><code style="display: inline-table;">Start recording [screen &lt;n&gt; |
+                    the primary screen |
+                    area &lt;width&gt; x &lt;height&gt; at (&lt;x&gt;, &lt;y&gt;) |
+                    window 'window-title'].</code></summary>
+<div class="content">
+<p>Starts screen recording, using FFmpeg. For this to work, FFmpeg must be installed and its executable must be in the <code>PATH</code>.</p>
+The screen area to record can be specified as
+<ul>
+<li>a particular screen, identified by its number (starting with 0)
+<li>the primary screen
+<li>an arbitrary rectangular screen area, specified by its position and dimensions
+<li>the area of the specified window
+</ul>
+</div>
+</details>
+
+<details>
+<summary><code>Stop recording.</code></summary>
+<div class="content">
+<p>Stops screen recording and opens the recorded video in the system video player.</p>
+</div>
+</details>
+
+</div>
+<!--
+Mouse click        <left | middle | right> at (<x>, <y>) <purpose>.
+Mouse double-click <left | middle | right> at (<x>, <y>) <purpose>.
+Mouse press        <left | middle | right> at (<x>, <y>) <purpose>. 
+Mouse release      <left | middle | right> at (<x>, <y>) <purpose>. 
+Mouse move to (<x>, <y>) <purpose>.
+Mouse move along coordinates (<x1>, <y1>), (<x2>, <y2>), ..., (<xn>, <yn>).
+Mouse drag <left | middle | right> along coordinates (<x1>, <y1>), (<x2>, <y2>), ..., (<xn>, <yn>). 
+Mouse scroll by <n> tick(s).
+Enter ['text1' | <keystroke1>], ['text2' | <keystroke2>], ... .
+Press key <keystroke>.
+Release key <keystroke>.
+// comment
+[message]
+Pause.
+Wait for <n> second(s).
+Wait for window 'window-title'.
+Position the window 'window-title' <width> x <height> at (<x>, <y>).
+Activate the window 'window-title'.
+Set the state of the window 'window-title' to [normal | maximized | minimized].
+Speak "text-to-speak-out-loud".
+Start recording [screen <n> | the primary screen | area <width> x <height> at (<x>, <y>) | window 'window-title'].
+Stop recording.
+-->
+<h2 id="special-requirements">Special requirements</h2>
+<ul>
+<li><p><code>FFmpeg</code>: Actual screen recording is performed using FFmpeg. It needs to be installed separately, e.g. from <a href="https://github.com/GyanD/codexffmpeg/releases/latest">https://github.com/GyanD/codexffmpeg/releases/latest</a>. Most likely you will want to get ffmpeg-X.X-full_build.zip. Unzip it and add the <code>bin/</code> folder to the <code>PATH</code> environment variable (Hit <code>Win-S</code>, type <code>Edit environment variables for your account</code>, edit the <code>Path</code> variable (either from the user or from the system variables) and add FFmpeg's <code>bin/</code> folder.)</p></li>
+<li><p><code>Screen-capture-recorder</code>: If you want to use the <code>Speak</code> command above and record its audio (using FFmpeg), install the Screen-capture-recorder from <a href="https://github.com/rdp/screen-capture-recorder-to-video-windows-free/">https://github.com/rdp/screen-capture-recorder-to-video-windows-free/</a>.</p></li>
+</ul>
+<p><br><br />
+<br><br />
+<br></p></article>

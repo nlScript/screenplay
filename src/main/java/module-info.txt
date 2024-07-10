@@ -1,0 +1,7 @@
+module nls {
+	requires java.desktop;
+	requires com.sun.jna.platform;
+	requires com.sun.jna;
+	requires java.logging;
+	requires nlScript;
+}
