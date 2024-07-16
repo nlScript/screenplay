@@ -33,5 +33,6 @@ jpackage --input dist/ \
          --win-menu --win-menu-group "Screenplay" \
 	 --app-version $version \
 	 --copyright "Benjamin Schmid" \
+	 --license-file LICENSE.txt \
 	 --icon icon.ico
 

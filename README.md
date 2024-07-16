@@ -40,3 +40,15 @@ Stop recording.
 https://github.io/nlScript/screenplay
 
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
+
+Screenplay depends on JNA. JNA is selectively licensed under [LGPL-3.0 License](https://www.gnu.org/licenses/lgpl-3.0.html) or [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). 
+
+Users are entitled to modify and replace the LGPL-licensed JNA library. For more details, please refer to the LGPL-3.0 license text.
+
+If you need to install or modify JNA, it can be obtained from:
+[JNA](https://github.com/java-native-access/jna)
+
+
