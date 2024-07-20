@@ -37,7 +37,7 @@ Stop recording.
 ```
 
 ## More information
-https://github.io/nlScript/screenplay
+https://nlScript.github.io/screenplay
 
 
 ## License
