@@ -39,6 +39,8 @@ Stop recording.
 ## More information
 https://nlScript.github.io/screenplay
 
+Screenplay uses [nlScript](https://github.com/nlScript/nlScript-java) for the natural language interface.
+
 
 ## License
 
