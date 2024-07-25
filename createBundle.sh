@@ -20,13 +20,7 @@ fi
 
 
 
-# Temporarily commented out, can be used again once nlScript is on maven central
-# mvn clean -DskipTests install -Dmaven.repo.local=./repo
-
-# For now, use the following commands
-mvn clean
-(cd ../nlScript-java && mvn -DskipTests install -Dmaven.repo.local=../screenplay/repo)
-mvn -DskipTests install -Dmaven.repo.local=./repo
+mvn clean -DskipTests install -Dmaven.repo.local=./repo
 
 cd "repo/io/github/nlscript/$name/$version/"
 
