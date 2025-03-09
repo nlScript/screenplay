@@ -114,36 +114,36 @@ public class MouseDragOverlay {
 		ScreenMessage.showMessage(curveEditor.getClickThroughInstruction());
 		WindowUtils.makeWindowClickThrough(frame);
 		final SecondaryLoop loop = Toolkit.getDefaultToolkit().getSystemEventQueue().createSecondaryLoop();
-		MouseHook.GlobalMouseListener ml = new MouseHook.GlobalMouseListener() {
-			@Override
-			public void mousePressed(MouseHook.GlobalMouseEvent e) {
-				System.out.println("mouse pressed: " + Thread.currentThread().getName());
-				Point p = new Point(
-						e.x - frame.getX(),
-						e.y - frame.getY());
-				curveEditor.appendPoint(p);
-			}
-
-			@Override
-			public void mouseReleased(MouseHook.GlobalMouseEvent e) {
-				System.out.println("mouse released: " + Thread.currentThread().getName());
-				List<Point> ctrls = getControls();
-				Point p = new Point(
-						e.x - frame.getX(),
-						e.y - frame.getY());
-				if(ctrls.isEmpty() || ctrls.get(ctrls.size() - 1).distance(p) > 2)
-					curveEditor.appendPoint(p);
-				loop.exit();
-			}
-
-			@Override
-			public void mouseMoved(MouseHook.GlobalMouseEvent e) {
-			}
-
-			@Override
-			public void mouseWheel(MouseHook.GlobalMouseEvent e) {
-			}
-		};
+//		MouseHook.GlobalMouseListener ml = new MouseHook.GlobalMouseListener() {
+//			@Override
+//			public void mousePressed(MouseHook.GlobalMouseEvent e) {
+//				System.out.println("mouse pressed: " + Thread.currentThread().getName());
+//				Point p = new Point(
+//						e.x - frame.getX(),
+//						e.y - frame.getY());
+//				curveEditor.appendPoint(p);
+//			}
+//
+//			@Override
+//			public void mouseReleased(MouseHook.GlobalMouseEvent e) {
+//				System.out.println("mouse released: " + Thread.currentThread().getName());
+//				List<Point> ctrls = getControls();
+//				Point p = new Point(
+//						e.x - frame.getX(),
+//						e.y - frame.getY());
+//				if(ctrls.isEmpty() || ctrls.get(ctrls.size() - 1).distance(p) > 2)
+//					curveEditor.appendPoint(p);
+//				loop.exit();
+//			}
+//
+//			@Override
+//			public void mouseMoved(MouseHook.GlobalMouseEvent e) {
+//			}
+//
+//			@Override
+//			public void mouseWheel(MouseHook.GlobalMouseEvent e) {
+//			}
+//		};
 
 		nlScript.screenplay.KeyboardHook.GlobalKeyListener kl = new nlScript.screenplay.KeyboardHook.GlobalKeyListener() {
 			@Override
@@ -168,11 +168,11 @@ public class MouseDragOverlay {
 			}
 		};
 
-		mHook.addGlobalMouseListener(ml);
+//		mHook.addGlobalMouseListener(ml);
 		kHook.addGlobalKeyListener(kl);
 		loop.enter();
 
-		mHook.removeGlobalMouseListener(ml);
+//		mHook.removeGlobalMouseListener(ml);
 		kHook.removeGlobalKeyListener(kl);
 
 		ScreenMessage.hide();
