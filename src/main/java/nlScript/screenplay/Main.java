@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 
+import static java.awt.event.MouseEvent.*;
 import static nlScript.screenplay.Main.Mode.RUN;
 import static java.awt.event.InputEvent.*;
 
@@ -242,9 +243,9 @@ public class Main implements AutoCloseable {
             return Autocompletion.literal(e, "(" + p.x + ", " + p.y + ")");
         });
 
-        parser.defineType("mouse-button", "left",   e -> BUTTON1_DOWN_MASK);
-        parser.defineType("mouse-button", "middle", e -> BUTTON2_DOWN_MASK);
-        parser.defineType("mouse-button", "right",  e -> BUTTON3_DOWN_MASK);
+        parser.defineType("mouse-button", "left",   e -> BUTTON1);
+        parser.defineType("mouse-button", "middle", e -> BUTTON2);
+        parser.defineType("mouse-button", "right",  e -> BUTTON3);
 
         parser.defineSentence("Mouse click {button:mouse-button} at {point:point}{goal:goal}", e -> {
             checkInterrupted();
@@ -256,8 +257,8 @@ public class Main implements AutoCloseable {
             Point p = (Point) e.evaluate("point");
             int button = (Integer) e.evaluate("button");
 
-            String bs = button == BUTTON1_DOWN_MASK ? "left" :
-                    (button == BUTTON2_DOWN_MASK ? "middle" : "right");
+            String bs = button == BUTTON1 ? "left" :
+                    (button == BUTTON2 ? "middle" : "right");
             showBubbleMessage("Click " + bs + " " + goal, p);
 
 
@@ -280,8 +281,8 @@ public class Main implements AutoCloseable {
             Point p = (Point) e.evaluate("point");
             int button = (Integer) e.evaluate("button");
 
-            String bs = button == BUTTON1_DOWN_MASK ? "left" :
-                    (button == BUTTON2_DOWN_MASK ? "middle" : "right");
+            String bs = button == BUTTON1 ? "left" :
+                    (button == BUTTON2 ? "middle" : "right");
             showBubbleMessage("Double-click " + bs + " " + goal, p);
 
             if(mode == Mode.VALIDATE)
@@ -303,8 +304,8 @@ public class Main implements AutoCloseable {
             Point p = (Point) e.evaluate("point");
             int button = (Integer) e.evaluate("button");
 
-            String bs = button == BUTTON1_DOWN_MASK ? "left" :
-                    (button == BUTTON2_DOWN_MASK ? "middle" : "right");
+            String bs = button == BUTTON1 ? "left" :
+                    (button == BUTTON2 ? "middle" : "right");
             showBubbleMessage("Press " + bs + " " + goal, p);
 
             if(mode == Mode.VALIDATE)
@@ -326,8 +327,8 @@ public class Main implements AutoCloseable {
             Point p = (Point) e.evaluate("point");
             int button = (Integer) e.evaluate("button");
 
-            String bs = button == BUTTON1_DOWN_MASK ? "left" :
-                    (button == BUTTON2_DOWN_MASK ? "middle" : "right");
+            String bs = button == BUTTON1 ? "left" :
+                    (button == BUTTON2 ? "middle" : "right");
             showBubbleMessage("Release " + bs + " " + goal, p);
 
             if (mode == Mode.VALIDATE)
@@ -1055,10 +1056,11 @@ public class Main implements AutoCloseable {
             this.mbv = new MouseButtonVisualization(null);
         }
 
-        public void clickAt(int x, int y, int buttonMask, int numClicks, boolean animate) {
+        public void clickAt(int x, int y, int button, int numClicks, boolean animate) {
+            int buttonMask = InputEvent.getMaskForButton(button);
             moveTo(x, y, animate);
             if(animate)
-                mbv.mouseClicked(x, y, buttonMask); // ScreenMessage.showMessage("", iconForButton(buttonMask), 500);
+                mbv.mouseClicked(x, y, button); // ScreenMessage.showMessage("", iconForButton(buttonMask), 500);
             delay(50);
             checkInterrupted();
             for(int i = 0; i < numClicks; i++) {
@@ -1076,7 +1078,8 @@ public class Main implements AutoCloseable {
 
         public void press(int button, boolean animate) {
             checkInterrupted();
-            robot.mousePress(button);
+            int buttonMask = InputEvent.getMaskForButton(button);
+            robot.mousePress(buttonMask);
             if(animate) {
                 Point p = MouseInfo.getPointerInfo().getLocation();
                 mbv.mousePressed(p.x, p.y, button); // ScreenMessage.showMessage("", leftClickIcon);
@@ -1091,7 +1094,8 @@ public class Main implements AutoCloseable {
 
         public void release(int button, boolean animate) {
             checkInterrupted();
-            robot.mouseRelease(button);
+            int buttonMask = InputEvent.getMaskForButton(button);
+            robot.mouseRelease(buttonMask);
             if(animate) {
                 mbv.mouseReleased(); // ScreenMessage.hide();
             }
