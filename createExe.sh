@@ -8,7 +8,7 @@ if ! mkdir dist/; then
     exit -1
 fi
 
-nlScript_version="0.3.0"
+nlScript_version="0.4.0"
 
 version=`mvn help:evaluate -Dexpression=project.version -q -DforceStdout`
 
