@@ -470,7 +470,9 @@ public class Main implements AutoCloseable {
                         if(pn.getParsedString().isEmpty()) {
                             Autocompletion.EntireSequence es = new Autocompletion.EntireSequence(pn);
                             es.addLiteral(pn.getChild(0).getSymbol(), null, "<");
-                            es.addParameterized(pn.getChild(1).getSymbol(), "key", "key");
+                            Autocompletion.Parameterized pp = new Autocompletion.Parameterized(pn.getChild(1).getSymbol(), "key", "key");
+                            pp.setAutocompleteOnActivation(true);
+                            es.add(pp);
                             es.addLiteral(pn.getChild(2).getSymbol(), null, ">");
                             return es.asArray();
                         }
@@ -486,7 +488,9 @@ public class Main implements AutoCloseable {
                         if(pn.getParsedString().length() < 3) {
                             Autocompletion.EntireSequence es = new Autocompletion.EntireSequence(pn);
                             es.addLiteral(pn.getChild(0).getSymbol(), null, ", <");
-                            es.addParameterized(pn.getChild(1).getSymbol(), "key", "key");
+                            Autocompletion.Parameterized pp = new Autocompletion.Parameterized(pn.getChild(1).getSymbol(), "key", "key");
+                            pp.setAutocompleteOnActivation(true);
+                            es.add(pp);
                             es.addLiteral(pn.getChild(2).getSymbol(), null, ">");
                             return es.asArray();
                         }
