@@ -25,14 +25,29 @@ cp ../nlScript-java/target/nlScript-${nlScript_version}.jar dist/
     curl -O https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.10.0/jna-5.10.0.jar && \
     curl -O https://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/5.10.0/jna-platform-5.10.0.jar)
 
+# portable version
 jpackage --input dist/ \
          --name Screenplay \
          --main-jar screenplay-$version.jar \
          --main-class nlScript.screenplay.Main \
-         --type exe \
+         --type app-image  \
+	 --app-version $version \
+	 --copyright "Benjamin Schmid" \
+	 --icon icon.ico
+mv Screenplay Screenplay-portable-$version
+zip -r Screenplay-portable-$version.zip Screenplay-portable-$version/
+
+# installer version
+jpackage --input dist/ \
+         --name Screenplay \
+         --main-jar screenplay-$version.jar \
+         --main-class nlScript.screenplay.Main \
+         --type exe  \
          --win-menu --win-menu-group "Screenplay" \
 	 --app-version $version \
 	 --copyright "Benjamin Schmid" \
 	 --license-file LICENSE.txt \
 	 --icon icon.ico
+
+mv Screenplay-$version.exe Screenplay-installer-$version.exe
 
