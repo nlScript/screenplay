@@ -49,11 +49,11 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 	}
 
 	public void start() {
+		ignoreEvents();
 		eventList.clear();
 		mHook.addGlobalMouseListener(this);
 		kHook.addGlobalKeyListener(this);
 		wHook.addWindowListener(this);
-		ignoreEvents = false;
 	}
 
 	public void pause() {
