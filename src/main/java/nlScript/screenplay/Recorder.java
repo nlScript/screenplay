@@ -90,6 +90,11 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 
 	@Override
 	public void windowOpened(WindowMonitor.WindowEvent e) {
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException ex) {
+			throw new RuntimeException(ex);
+		}
 		addEvent(new WindowOpenedEvent(e.window, System.currentTimeMillis()));
 		onNewEvent();
 	}
