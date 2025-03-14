@@ -315,17 +315,17 @@ public class WindowUtils {
 			rect.x + rect.width / 2,
 			rect.y + rect.height / 2);
 		toClick = Screen.getScaled(toClick);
-		try {
-			Robot robot = new Robot();
-			Point tmp = MouseInfo.getPointerInfo().getLocation();
-			robot.mouseMove(toClick.x, toClick.y);
-			robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-			robot.delay(50);
-			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-			robot.mouseMove(tmp.x, tmp.y);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Robot robot = new Robot();
+//			Point tmp = MouseInfo.getPointerInfo().getLocation();
+//			robot.mouseMove(toClick.x, toClick.y);
+//			robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+//			robot.delay(50);
+//			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+//			robot.mouseMove(tmp.x, tmp.y);
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	// https://pinvoke.net/default.aspx/user32.SetForegroundWindow
