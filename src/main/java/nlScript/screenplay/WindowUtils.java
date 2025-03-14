@@ -242,8 +242,10 @@ public class WindowUtils {
 	 */
 	public static WinDef.HWND getWindowOrThrow(String title) {
 		WinDef.HWND ret = User32.INSTANCE.FindWindow(null, title);
-		if(ret == null)
-			throw new RuntimeException("No window with title '" + title + "'");
+		if(ret == null) {
+			List<String> titles = listWindowTitles();
+			throw new RuntimeException("No window with title '" + title + "', available windows are " + titles);
+		}
 		return ret;
 	}
 
