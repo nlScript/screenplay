@@ -148,6 +148,11 @@ public class Main implements AutoCloseable {
             throw new RuntimeException("Interrupted");
     }
 
+    private String getButtonString(int button) {
+        return button == BUTTON1 ? "left" :
+                (button == BUTTON2 ? "middle" : "right");
+    }
+
     public Main() {
         // TODO enable all hooks only as long as validating
 
@@ -251,15 +256,15 @@ public class Main implements AutoCloseable {
             checkInterrupted();
             String goal = (String) e.evaluate("goal");
             if (mode == Mode.VALIDATE) {
-                showValidationInstruction("Position the cursor " + goal + ", then press <F2>");
+                String gs = goal == null ? "" : " " + goal;
+                showValidationInstruction("Position the cursor" + gs + ", then press <F2>");
             }
 
             Point p = (Point) e.evaluate("point");
             int button = (Integer) e.evaluate("button");
 
-            String bs = button == BUTTON1 ? "left" :
-                    (button == BUTTON2 ? "middle" : "right");
-            showBubbleMessage("Click " + bs + " " + goal, p);
+            if(goal != null)
+                showBubbleMessage("Click " + getButtonString(button) + " " + goal, p);
 
 
             if (mode == Mode.VALIDATE)
@@ -276,14 +281,14 @@ public class Main implements AutoCloseable {
             checkInterrupted();
             String goal = (String) e.evaluate("goal");
             if(mode == Mode.VALIDATE) {
-                showValidationInstruction("Position the cursor " + goal + ", then press <F2>");
+                String gs = goal == null ? "" : " " + goal;
+                showValidationInstruction("Position the cursor" + gs + ", then press <F2>");
             }
             Point p = (Point) e.evaluate("point");
             int button = (Integer) e.evaluate("button");
 
-            String bs = button == BUTTON1 ? "left" :
-                    (button == BUTTON2 ? "middle" : "right");
-            showBubbleMessage("Double-click " + bs + " " + goal, p);
+            if(goal != null)
+                showBubbleMessage("Double-click " + getButtonString(button) + " " + goal, p);
 
             if(mode == Mode.VALIDATE)
                 hideValidationInstruction();
@@ -299,14 +304,14 @@ public class Main implements AutoCloseable {
             checkInterrupted();
             String goal = (String) e.evaluate("goal");
             if(mode == Mode.VALIDATE) {
-                showValidationInstruction("Position the cursor " + goal + ", then press <F2>");
+                String gs = goal == null ? "" : " " + goal;
+                showValidationInstruction("Position the cursor" + gs + ", then press <F2>");
             }
             Point p = (Point) e.evaluate("point");
             int button = (Integer) e.evaluate("button");
 
-            String bs = button == BUTTON1 ? "left" :
-                    (button == BUTTON2 ? "middle" : "right");
-            showBubbleMessage("Press " + bs + " " + goal, p);
+            if(goal != null)
+                showBubbleMessage("Press " + getButtonString(button) + " " + goal, p);
 
             if(mode == Mode.VALIDATE)
                 hideValidationInstruction();
@@ -322,14 +327,14 @@ public class Main implements AutoCloseable {
             String goal = (String) e.evaluate("goal");
             checkInterrupted();
             if (mode == Mode.VALIDATE) {
-                showValidationInstruction("Position the cursor " + goal + ", then press <F2>");
+                String gs = goal == null ? "" : " " + goal;
+                showValidationInstruction("Position the cursor" + gs + ", then press <F2>");
             }
             Point p = (Point) e.evaluate("point");
             int button = (Integer) e.evaluate("button");
 
-            String bs = button == BUTTON1 ? "left" :
-                    (button == BUTTON2 ? "middle" : "right");
-            showBubbleMessage("Release " + bs + " " + goal, p);
+            if(goal != null)
+                showBubbleMessage("Release " + getButtonString(button) + " " + goal, p);
 
             if (mode == Mode.VALIDATE)
                 hideValidationInstruction();
@@ -345,11 +350,13 @@ public class Main implements AutoCloseable {
             checkInterrupted();
             String goal = (String) e.evaluate("goal");
             if(mode == Mode.VALIDATE) {
-                showValidationInstruction("Position the cursor " + goal + ", then press <F2>");
+                String gs = goal == null ? "" : " " + goal;
+                showValidationInstruction("Position the cursor" + gs + ", then press <F2>");
             }
             Point p = (Point) e.evaluate("point");
 
-            showBubbleMessage("Move here " + goal, p);
+            if(goal != null)
+                showBubbleMessage("Move here " + goal, p);
 
             if(mode == Mode.VALIDATE)
                 hideValidationInstruction();
