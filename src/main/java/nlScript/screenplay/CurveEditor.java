@@ -26,8 +26,9 @@ public class CurveEditor extends JPanel implements OverlayEditor, MouseListener,
 
 	private static final String clickThroughInstruction =
 			"Drag/Move interactively<br>" +
-			"Press <F2> regularly if dragging along a bent path<br>" +
-			"Press <F3> to finish";
+			"Press <b style=\"color: orange;\">F2</b> to start drag recording<br>" +
+			"Press <b style=\"color: orange;\">F2</b> regularly to record points along a (curved) path<br>" +
+			"Press <b style=\"color: orange;\">F3</b> to finish";
 
 	private static final String editInstruction =
 			"Edit the drag/move path by"+

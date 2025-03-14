@@ -15,8 +15,8 @@ import java.util.ArrayList;
 public class SinglePointEditor extends JPanel implements OverlayEditor, MouseListener {
 
 	private static final String clickThroughInstruction =
-			"Move cursor to target position and click <F2><br>" +
-			"Press <F3> to finish";
+			"Move cursor to target position and click <b style=\"color: orange;\">F2</b><br>" +
+			"Press <b style=\"color: orange;\">F3</b> to finish</html>";
 
 	private static final String editInstruction =
 			"Edit the point position by"+

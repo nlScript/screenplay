@@ -111,7 +111,7 @@ public class MouseDragOverlay {
 
 	public void showWithClickThrough(MouseHook mHook, nlScript.screenplay.KeyboardHook kHook) { // TODO name
 		show(false);
-		ScreenMessage.showMessage(curveEditor.getClickThroughInstruction());
+		ScreenMessage.showMessage("<html>" + curveEditor.getClickThroughInstruction() + "</html>");
 		WindowUtils.makeWindowClickThrough(frame);
 		final SecondaryLoop loop = Toolkit.getDefaultToolkit().getSystemEventQueue().createSecondaryLoop();
 //		MouseHook.GlobalMouseListener ml = new MouseHook.GlobalMouseListener() {
