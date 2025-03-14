@@ -28,6 +28,8 @@ public class Editor extends ACEditor {
 	public Editor(Parser parser) {
 		super(parser);
 
+		getFrame().setTitle("Screenplay");
+
 		JMenuBar menuBar = new JMenuBar();
 
 		// Create the File menu with a mnemonic
@@ -98,7 +100,6 @@ public class Editor extends ACEditor {
 		currentFile = file;
 		try (BufferedReader reader = new BufferedReader(new FileReader(currentFile))) {
 			getTextArea().read(reader, null);
-			getFrame().setTitle("bdv-nlScript - " + currentFile.getName());
 		} catch (IOException ex) {
 			throw new RuntimeException("Cannot open file " + currentFile, ex);
 		}
@@ -115,7 +116,6 @@ public class Editor extends ACEditor {
 		if (currentFile != null) {
 			try (BufferedWriter writer = new BufferedWriter(new FileWriter(currentFile))) {
 				getTextArea().write(writer);
-				getFrame().setTitle("bdv-nlScript - " + currentFile.getName());
 			} catch (IOException ex) {
 				throw new RuntimeException("Cannot save file " + currentFile, ex);
 			}
