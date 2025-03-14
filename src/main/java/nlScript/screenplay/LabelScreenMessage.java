@@ -22,6 +22,12 @@ public class LabelScreenMessage extends ScreenMessage4 {
 		setForeground(Color.WHITE);
 	}
 
+	@Override
+	public void configure() {
+		this.messageLabel.setText("Test message");
+		super.configure();
+	}
+
 	public LabelScreenMessage showMessage(String message, Icon icon) {
 		// hide();
 		messageLabel.setText(message);
