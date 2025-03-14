@@ -170,6 +170,8 @@ public final class MouseHook {
     private WinUser.LowLevelMouseProc hookTheMouse() {
         // https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-msllhookstruct
         return new WinUser.LowLevelMouseProc() {
+            private int scrollAmount = 0;
+
             @Override
             public WinDef.LRESULT callback(int nCode, WinDef.WPARAM wParam, WinUser.MSLLHOOKSTRUCT info) {
                 GlobalMouseEvent event = null;
@@ -215,15 +217,17 @@ public final class MouseHook {
                             fireMouseMoved(event);
                             break;
                         case MouseHook.WM_MOUSEWHEEL: // Scrolling by wheel
-                            int scrollAmount = hiword(info.mouseData);
+                            scrollAmount += hiword(info.mouseData);
                             /*
                              * One tick is 120, directions are reversed in WINAPI and Java. Compare:
                              * https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-msllhookstruct#members
                              * https://docs.oracle.com/javase/8/docs/api/java/awt/Robot.html#mouseWheel-int-
                              */
-                            scrollAmount /= -120;
-                            event = new GlobalMouseEvent(pt.x, pt.y, GlobalMouseEvent.MIDDLE, scrollAmount, isCtrlDown, isShiftDown, isAltDown);
-                            fireMouseWheel(event);
+                            if(Math.abs(scrollAmount) >= 120) {
+                                event = new GlobalMouseEvent(pt.x, pt.y, GlobalMouseEvent.MIDDLE, scrollAmount / -120, isCtrlDown, isShiftDown, isAltDown);
+                                scrollAmount = scrollAmount % 120;
+                                fireMouseWheel(event);
+                            }
                             break;
                         default:
                             break;
