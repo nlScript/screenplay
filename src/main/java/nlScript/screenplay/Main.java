@@ -13,6 +13,8 @@ import nlScript.ui.ACEditor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
@@ -28,7 +30,6 @@ import java.util.stream.Collectors;
 
 import static java.awt.event.MouseEvent.*;
 import static nlScript.screenplay.Main.Mode.RUN;
-import static java.awt.event.InputEvent.*;
 
 public class Main implements AutoCloseable {
 
@@ -1158,7 +1159,6 @@ public class Main implements AutoCloseable {
                 pi.currentSegment(points);
                 int x = Math.round(points[0]);
                 int y = Math.round(points[1]);
-                System.out.println("mouseMove(" + x + ", " + y + ")");
                 robot.mouseMove(x, y);
                 pi.next();
                 long nextTimepoint = prevTimePoint + delay;
@@ -1172,7 +1172,7 @@ public class Main implements AutoCloseable {
             }
         }
 
-        public void move(Point[] pts, int button, boolean animate) {
+        public void moveNotSoOld(Point[] pts, int button, boolean animate) {
             checkInterrupted();
 
             double within = 2000; // ms // TODO make this a parameter
@@ -1198,7 +1198,6 @@ public class Main implements AutoCloseable {
                 pi.currentSegment(points);
                 int x = Math.round(points[0]);
                 int y = Math.round(points[1]);
-                // System.out.println("mouseMove(" + x + ", " + y + ")");
                 robot.mouseMove(x, y);
                 mbv.mouseMoved(x, y);
                 pi.next();
@@ -1207,6 +1206,65 @@ public class Main implements AutoCloseable {
                 delay((int)(Math.max(0, nextTimepoint - time)));
                 prevTimePoint = nextTimepoint;
             }
+            if(button > 0) {
+                delay(30);
+                release(button, animate);
+            }
+        }
+
+        private double getMouseSpeed(double distance) {
+            return (1500 - 1500 * Math.exp(-0.003 * distance));
+        }
+
+        public void move(Point[] pts, int button, boolean animate) {
+            checkInterrupted();
+
+            moveTo(pts[0].x, pts[0].y, animate);
+            if(button >= 0)
+                press(button, animate);
+
+            float[] points = new float[6];
+
+            long prevTimePoint = System.currentTimeMillis();
+
+            for(int i = 1; i < pts.length; i++) {
+                checkInterrupted();
+                Point p0 = pts[i - 1];
+                Point p1 = pts[i];
+                int dx = p1.x - p0.x;
+                int dy = p1.y - p0.y;
+                double stepsPerSecond = 40;
+                double s = Math.sqrt(dx * dx + dy * dy);
+                double mouseSpeed = getMouseSpeed(s);
+                double duration = s / mouseSpeed;
+                int nSteps = (int) Math.round(duration * stepsPerSecond);
+                stepsPerSecond = nSteps / duration;
+                int timeToWait = (int)Math.round(1000.0 / stepsPerSecond); // in ms
+
+                GeneralPath path = new CurveEditor.Spline2D(
+                        Arrays.stream(pts).map(p -> new java.awt.Point(p.x, p.y)).collect(Collectors.toList())).getPath(nSteps);
+                PathIterator pi = path.getPathIterator(null);
+                // skip the first [(i-1) * nSteps + 1] entrys
+                int toSkip = (i - 1) * nSteps + 1;
+                for(int skip = 0; skip < toSkip; skip++)
+                    pi.next();
+
+                for(int p = 0; p < nSteps; p++) {
+                    checkInterrupted();
+                    pi.currentSegment(points);
+                    int x = Math.round(points[0]);
+                    int y = Math.round(points[1]);
+                    robot.mouseMove(x, y);
+                    mbv.mouseMoved(x, y);
+                    pi.next();
+                    long nextTimepoint = prevTimePoint + timeToWait;
+                    long time = System.currentTimeMillis();
+                    int delay = (int)(Math.max(0, nextTimepoint - time));
+                    delay(delay);
+                    prevTimePoint = nextTimepoint;
+                }
+            }
+
             if(button > 0) {
                 delay(30);
                 release(button, animate);
@@ -1333,9 +1391,11 @@ public class Main implements AutoCloseable {
             java.awt.Point p = pi.getLocation();
             int dx = x - p.x;
             int dy = y - p.y;
-            double stepsPerSecond = 30;
+            double stepsPerSecond = 20;
             double s = Math.sqrt(dx * dx + dy * dy);
-            double duration = 1.0; // s / MOUSE_SPEED;
+            double mouseSpeed = getMouseSpeed(s);
+            // double duration = 1.0; // s / MOUSE_SPEED;
+            double duration = s / mouseSpeed;
             int nSteps = (int) Math.round(duration * stepsPerSecond);
             stepsPerSecond = nSteps / duration;
             int timeToWait = (int)Math.round(1000.0 / stepsPerSecond); // in ms
@@ -1346,7 +1406,6 @@ public class Main implements AutoCloseable {
                 checkInterrupted();
                 int xTgt = (int) Math.round(p.x + step * dxPerStep);
                 int yTgt = (int) Math.round(p.y + step * dyPerStep);
-//                System.out.println("move to (" + xTgt + ", " + yTgt + ")");
                 robot.mouseMove(xTgt, yTgt);
                 delay(timeToWait);
             }
