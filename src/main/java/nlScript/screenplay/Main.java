@@ -915,7 +915,16 @@ public class Main implements AutoCloseable {
         mi.addActionListener(l -> {
             recorder.start();
             recordingLabel.setVisible(true);
-
+            LabelScreenMessage msg = new LabelScreenMessage();
+            msg.setAlignAt(ScreenMessage4.AlignAt.SCREEN);
+            msg.setAlignment(ScreenMessage4.Alignment.TOP_CENTER);
+            msg.setSize(ScreenMessage4.Size.PACKED);
+            msg.setMargin(20);
+            msg.setPadding(10);
+            msg.setFontSize(18);
+            msg.setBackground(new Color(0, 0, 0, 250));
+            msg.showMessage("Recording is paused. Toggle with [F8].");
+            msg.hideAfter(2000);
         });
         menu.add(mi);
 
@@ -932,6 +941,7 @@ public class Main implements AutoCloseable {
         c.anchor = GridBagConstraints.EAST;
         menuBar.add(recordingLabel, c);
         recordingLabel.setVisible(false);
+        recordingLabel.setToolTipText("Toggle with [F8]");
 
         recorder.setOnToggleIgnoreEvents(() -> {
             recordingLabel.setIcon(recorder.getIgnoreEvents() ? recordingPausedIcon : recordingIcon);
