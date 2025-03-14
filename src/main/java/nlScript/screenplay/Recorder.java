@@ -489,6 +489,10 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 		public EnterKeyEvent(long millis) {
 			super(-1, new char[0], 0, 0, millis);
 		}
+
+		public String toString() {
+			return getClass() + ": keystroke = " + this.getKeyStroke() + " unicode = " + new String(unicode);
+		}
 	}
 
 	private static class EnterKeyStrokeEvent extends EnterKeyEvent {
@@ -498,6 +502,11 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 		public EnterKeyStrokeEvent(KeyStroke keyStroke, long millis) {
 			super(millis);
 			this.keyStroke = keyStroke;
+		}
+
+		@Override
+		public KeyStroke getKeyStroke() {
+			return keyStroke;
 		}
 
 		public String emit() {
@@ -540,9 +549,17 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 
 		private final String text;
 
-		public EnterTextEvent(String s, long millis) {
+		private final KeyStroke keyStroke;
+
+		public EnterTextEvent(KeyStroke keystroke, String s, long millis) {
 			super(millis);
+			this.keyStroke = keystroke;
 			this.text = s;
+		}
+
+		@Override
+		public KeyStroke getKeyStroke() {
+			return keyStroke;
 		}
 
 		public String toString() {
@@ -550,24 +567,40 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 		}
 
 		public String emit() {
-			return "Enter '" + text + "'.";
+			if(text.length() > 1)
+				return "Enter '" + text + "'.";
+
+			// a single character, make it a keystroke
+			return new EnterKeyStrokeEvent(getKeyStroke(), millis).emit();
 		}
 
 		public Event mergeWithNext(Event next) {
+			System.out.println("merge with next: " + next);
 			if(next instanceof EnterKeyStrokeEvent) {
-				Event e = new MultiEnterEvent(new EnterKeyEvent[] {this, (EnterKeyEvent) next}, millis);
+				EnterKeyEvent toMerge = this;
+				if(this.text.length() == 1) { // a single character, make it a keystroke
+					toMerge = new EnterKeyStrokeEvent(this.getKeyStroke(), this.millis);
+				}
+				Event e = new MultiEnterEvent(new EnterKeyEvent[] {toMerge, (EnterKeyEvent) next}, millis);
 				e.setDone(true);
 				return e;
 			}
 			else if(next instanceof EnterTextEvent) {
-				Event e = new EnterTextEvent(this.text + ((EnterTextEvent) next).text, millis);
+				Event e = new EnterTextEvent(null, this.text + ((EnterTextEvent) next).text, millis);
 				e.setDone(true);
 				return e;
 			}
 			else if(next instanceof MultiEnterEvent) {
 				MultiEnterEvent mee = (MultiEnterEvent) next;
+				EnterKeyEvent firstOfNext = mee.events[0];
+				EnterKeyEvent toMerge = this;
+				if(firstOfNext instanceof EnterKeyStrokeEvent) {
+					if(this.text.length() == 1) { // a single character, make it a keystroke
+						toMerge = new EnterKeyStrokeEvent(this.getKeyStroke(), this.millis);
+					}
+				}
 				EnterKeyEvent[] events = new EnterKeyEvent[mee.events.length + 1];
-				events[0] = this;
+				events[0] = toMerge;
 				System.arraycopy(mee.events, 0, events, 1, mee.events.length);
 				Event e =  new MultiEnterEvent(events, millis);
 				e.setDone(true);
@@ -608,7 +641,7 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 				EnterTextEvent mee = (EnterTextEvent) next;
 				EnterKeyEvent last = events[events.length - 1];
 				if(last instanceof EnterTextEvent) {
-					events[events.length - 1] = new EnterTextEvent(((EnterTextEvent) last).text + mee.text, millis);
+					events[events.length - 1] = new EnterTextEvent(null, ((EnterTextEvent) last).text + mee.text, millis);
 					setDone(true);
 					return this;
 				}
@@ -859,7 +892,6 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 				throw new RuntimeException("Could not find key press preceding a key release");
 			List<Event> sl = eventList.subList(from, to + 1);
 			analyzeFromAllKeysDownToAllKeysDown(sl);
-			System.out.println();
 		}
 
 //		else if(event instanceof KeyPressEvent) {
@@ -1114,7 +1146,7 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 						}
 					}
 					Event newEv = (!KeyboardHook.GlobalKeyEvent.isControlDown(pe.modifiers) && unicode.length > 0 && isPrintable && pe.keycode != Win32VK.VK_RETURN.code) ?
-							new EnterTextEvent(new String(unicode), e.millis) :
+							new EnterTextEvent(pe.getKeyStroke(), new String(unicode), e.millis) :
 							new EnterKeyStrokeEvent(pe.getKeyStroke(), e.millis);
 					newEv.setDone(true);
 					newEvents.add(newEv);
