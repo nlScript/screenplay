@@ -1345,13 +1345,33 @@ public class Main implements AutoCloseable {
         }
 
         /*
+         * TODO: This is a horrible hack, but unfortunately the solution which works best, so we'll keep it for now
+         */
+        public void typeCharacter(char c) {
+            String text = Character.toString(c);
+            StringSelection stringSelection = new StringSelection(text);
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(stringSelection, stringSelection);
+
+            robot.keyPress(KeyEvent.VK_CONTROL);
+            robot.keyPress(KeyEvent.VK_V);
+            robot.delay(10);
+            robot.keyRelease(KeyEvent.VK_V);
+            robot.keyRelease(KeyEvent.VK_CONTROL);
+        }
+
+        /*
          * https://stackoverflow.com/questions/28538234/sending-a-keyboard-input-with-java-jna-and-sendinput
          * https://stackoverflow.com/questions/21641725/how-to-simulate-string-keyboard-input-using-python
          * https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput?redirectedfrom=MSDN
          * https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-input
          * https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-keybdinput
          */
-        public void typeCharacter(char c) {
+        /*
+         * Unfortunately, this does not work with some programs, in particular it doesn't work with
+         * AWT textfields.
+         */
+        public void typeCharacterOld(char c) {
             checkInterrupted();
             WinUser.INPUT input = new WinUser.INPUT();
 
@@ -1365,6 +1385,66 @@ public class Main implements AutoCloseable {
             input.input.ki.wVk = new WinDef.WORD(0);
             input.input.ki.dwFlags = new WinDef.DWORD(WinUser.KEYBDINPUT.KEYEVENTF_UNICODE);
 
+            User32.INSTANCE.SendInput(new WinDef.DWORD(1), (WinUser.INPUT[]) input.toArray(1), input.size());
+        }
+
+        public void typeCharacterNotSoOld(char c) {
+            WinUser.INPUT input = new WinUser.INPUT();
+            input.type = new WinDef.DWORD(WinUser.INPUT.INPUT_KEYBOARD);
+            input.input.setType("ki");
+            input.input.ki.wScan = new WinDef.WORD(0);
+            input.input.ki.time = new WinDef.DWORD(0);
+            input.input.ki.dwExtraInfo = new BaseTSD.ULONG_PTR(0);
+
+            // Get the keyboard layout for the current thread
+            WinDef.HKL layout = User32.INSTANCE.GetKeyboardLayout(0);
+
+            // Get the virtual-key code and shift state
+            short keyData = User32.INSTANCE.VkKeyScanExA((byte)c, layout);
+            byte vkCode = (byte) (keyData & 0xFF);
+            byte shiftState = (byte) (keyData >> 8);
+
+            // Handle modifier keys
+            if ((shiftState & 1) != 0) { // Shift key
+                sendModifierKey(User32.VK_SHIFT, true);
+            }
+            if ((shiftState & 2) != 0) { // Control key
+                sendModifierKey(User32.VK_CONTROL, true);
+            }
+            if ((shiftState & 4) != 0) { // Alt key
+                sendModifierKey(User32.VK_MENU, true);
+            }
+
+            // Press character key
+            input.input.ki.wVk = new WinDef.WORD(vkCode);
+            input.input.ki.dwFlags = new WinDef.DWORD(0);  // keydown
+            User32.INSTANCE.SendInput(new WinDef.DWORD(1), (WinUser.INPUT[]) input.toArray(1), input.size());
+
+            // Release character key
+            input.input.ki.dwFlags = new WinDef.DWORD(WinUser.KEYBDINPUT.KEYEVENTF_KEYUP);  // keyup
+            User32.INSTANCE.SendInput(new WinDef.DWORD(1), (WinUser.INPUT[]) input.toArray(1), input.size());
+
+            // Release modifier keys
+            if ((shiftState & 1) != 0) { // Shift key
+                sendModifierKey(User32.VK_SHIFT, false);
+            }
+            if ((shiftState & 2) != 0) { // Control key
+                sendModifierKey(User32.VK_CONTROL, false);
+            }
+            if ((shiftState & 4) != 0) { // Alt key
+                sendModifierKey(User32.VK_MENU, false);
+            }
+        }
+
+        private void sendModifierKey(int key, boolean press) {
+            WinUser.INPUT input = new WinUser.INPUT();
+            input.type = new WinDef.DWORD(WinUser.INPUT.INPUT_KEYBOARD);
+            input.input.setType("ki");
+            input.input.ki.wVk = new WinDef.WORD(key);
+            input.input.ki.wScan = new WinDef.WORD(0);
+            input.input.ki.time = new WinDef.DWORD(0);
+            input.input.ki.dwExtraInfo = new BaseTSD.ULONG_PTR(0);
+            input.input.ki.dwFlags = new WinDef.DWORD(press ? 0 : WinUser.KEYBDINPUT.KEYEVENTF_KEYUP);
             User32.INSTANCE.SendInput(new WinDef.DWORD(1), (WinUser.INPUT[]) input.toArray(1), input.size());
         }
 
