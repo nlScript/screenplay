@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 
 public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListener, nlScript.screenplay.KeyboardHook.GlobalKeyListener, WindowMonitor.WindowListener, AutoCloseable {
 
+	private static final boolean DEBUG = false;
+
 	private final nlScript.screenplay.MouseHook mHook;
 
 	private final nlScript.screenplay.KeyboardHook kHook;
@@ -105,14 +107,13 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 
 	@Override
 	public void keyPressed(nlScript.screenplay.KeyboardHook.GlobalKeyEvent e) {
-		System.out.println("keyPressed " + e);
+		dbg("keyPressed " + e);
 		if(e.keycode == TOGGLE_IGNORE_KEYCODE) {
 			toggleIgnoreEvents();
 			e.consume();
 			return;
 		}
 
-//		System.out.println("key pressed " + e.getKeyStroke());
 		if(!keyDown[e.keycode]) {
 			nKeysDown++;
 			keyDown[e.keycode] = true;
@@ -122,16 +123,15 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 
 	@Override
 	public void keyReleased(nlScript.screenplay.KeyboardHook.GlobalKeyEvent e) {
-		System.out.println("keyReleased " + e);
+		dbg("keyReleased " + e);
 		if(e.keycode == TOGGLE_IGNORE_KEYCODE) {
 			e.consume();
 			return;
 		}
-//		System.out.println("key released: " + e.getKeyStroke());
 		if(keyDown[e.keycode]) {
 			nKeysDown--;
 			if(nKeysDown == 0)
-				System.out.println("No keys pressed any more");
+				dbg("No keys pressed any more");
 			keyDown[e.keycode] = false;
 		}
 		addEvent(new KeyReleaseEvent(e.keycode, e.unicode, e.getModifiers(), nKeysDown, System.currentTimeMillis()));
@@ -575,7 +575,7 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 		}
 
 		public Event mergeWithNext(Event next) {
-			System.out.println("merge with next: " + next);
+			dbg("merge with next: " + next);
 			if(next instanceof EnterKeyStrokeEvent) {
 				EnterKeyEvent toMerge = this;
 				if(this.text.length() == 1) { // a single character, make it a keystroke
@@ -862,9 +862,6 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 			analyzeFromMousePressToRelease(sl);
 
 			// TODO need to check for double-click here
-//			for(Event e : sl)
-//				System.out.println(e.emit());
-//			System.out.println();
 		}
 
 		else if(event instanceof KeyReleaseEvent) {
@@ -910,8 +907,8 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 		while(i < eventList.size() - 1) {
 			Event e = eventList.get(i);
 			if(!e.isDone()) {
-				System.out.println("Not done yet:");
-				System.out.println(e.emit());
+				dbg("Not done yet:");
+				dbg(e.emit());
 				break;
 			}
 			Event n = eventList.get(i + 1);
@@ -1050,7 +1047,7 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 	*/
 
 	private void analyzeFromAllKeysDownToAllKeysDown(List<Event> eventList) {
-		System.out.println("analyzeFromAllKeysDownToAllKeysDown");
+		dbg("analyzeFromAllKeysDownToAllKeysDown");
 		boolean onlyModifiers = true;
 		boolean sthElseInBetween = false;
 		// -----
@@ -1183,7 +1180,7 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 	}
 
 	private static void analyzeFromMousePressToRelease(List<Event> eventList) {
-		System.out.println("analyzeFromMousePressToRelease");
+		dbg("analyzeFromMousePressToRelease");
 		boolean movedInBetween = false;
 		boolean sthElseInBetween = false;
 
@@ -1304,17 +1301,22 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 	private void addEvent(Event e) {
 		synchronized (eventList) {
 			eventList.add(e);
-			System.out.println("Event added " + Thread.currentThread().getName());
+			dbg("Event added " + Thread.currentThread().getName());
 			printEventList();
 		}
 	}
 
 	private void printEventList() {
-		System.out.println("EventList:");
+		dbg("EventList:");
 		for(Event e : eventList)
-			System.out.println(e.emit());
+			dbg(e.emit());
 	}
 
+	private static void dbg(String s) {
+		if(!DEBUG)
+			return;
+		System.out.println(s);
+	}
 
 	public static void main(String[] args) {
 		int n = 18;

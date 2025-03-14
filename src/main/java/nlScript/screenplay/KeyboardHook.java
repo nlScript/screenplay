@@ -113,7 +113,6 @@ public class KeyboardHook implements AutoCloseable{
 		GlobalKeyListener l = new GlobalKeyListener() {
 			@Override
 			public void keyPressed(GlobalKeyEvent e) {
-				System.out.println("keyPressed");
 				if(e.keycode == keycode) {
 					synchronized (lock) {
 						lock.notify();
@@ -201,7 +200,7 @@ public class KeyboardHook implements AutoCloseable{
 					}
 					USER32INST.UnhookWindowsHookEx(hhk);
 				} else {
-					System.out.println("The Hook is already installed.");
+					System.err.println("The Hook is already installed.");
 				}
 			} catch (Exception e) {
 				throw new RuntimeException("Exception in MouseHook", e);
@@ -239,8 +238,6 @@ public class KeyboardHook implements AutoCloseable{
 						isAltDown   = isAltDown   || keycode == WinUser.VK_MENU    || keycode == WinUser.VK_LMENU    || keycode == WinUser.VK_RMENU;
 						event = new GlobalKeyEvent(keycode, unicode, isCtrlDown, isShiftDown, isAltDown);
 						fireKeyPressed(event);
-//						if(unicode.length > 0)
-//							System.out.println("toUnicode = " + new String(unicode));
 					} else if(intValue == WinUser.WM_KEYUP || intValue == WinUser.WM_SYSKEYUP) {
 						if(keycode == WinUser.VK_CONTROL || keycode == WinUser.VK_LCONTROL || keycode == WinUser.VK_RCONTROL) isCtrlDown  = false;
 						if(keycode == WinUser.VK_SHIFT   || keycode == WinUser.VK_LSHIFT   || keycode == WinUser.VK_RSHIFT)   isShiftDown = false;
@@ -305,8 +302,6 @@ public class KeyboardHook implements AutoCloseable{
 		Thread.sleep(10 * 1000);
 		hooker.unsetKeyboardHook();
 		System.exit(0);
-//		System.out.println("waiting for F3");
-//		hooker.waitForKey(KeyEvent.VK_F);
 		System.out.println("done");
 	}
 }

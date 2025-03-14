@@ -155,7 +155,7 @@ public final class MouseHook {
                     }
                     USER32INST.UnhookWindowsHookEx(hhk);
                 } else {
-                    System.out.println("The Hook is already installed.");
+                    System.err.println("The Hook is already installed.");
                 }
             } catch (Exception e) {
                 throw new RuntimeException("Exception in MouseHook", e);
@@ -184,33 +184,27 @@ public final class MouseHook {
                     switch (wParam.intValue()) {
                         case MouseHook.WM_LBUTTONDOWN: // Left click
                             event = new GlobalMouseEvent(pt.x, pt.y, GlobalMouseEvent.LEFT, isCtrlDown, isShiftDown, isAltDown);
-//                            System.out.println("left button down at " + pt.x + ", " + pt.y);
                             fireMousePressed(event);
                             break;
                         case MouseHook.WM_RBUTTONDOWN: // Right click
                             event = new GlobalMouseEvent(pt.x, pt.y, GlobalMouseEvent.RIGHT, isCtrlDown, isShiftDown, isAltDown);
-//                            System.out.println("right button down at " + pt.x + ", " + pt.y);
                             fireMousePressed(event);
                             break;
                         case MouseHook.WM_MBUTTONDOWN:  // Middle click
                             event = new GlobalMouseEvent(pt.x, pt.y, GlobalMouseEvent.MIDDLE, isCtrlDown, isShiftDown, isAltDown);
-//                            System.out.println("middle button down at " + pt.x + ", " + pt.y);
                             fireMousePressed(event);
                             break;
                         case MouseHook.WM_LBUTTONUP:
                             event = new GlobalMouseEvent(pt.x, pt.y, GlobalMouseEvent.LEFT, isCtrlDown, isShiftDown, isAltDown);
                             fireMouseReleased(event);
-//                            System.out.println("left button up");
                             break;
                         case MouseHook.WM_RBUTTONUP:
                             event = new GlobalMouseEvent(pt.x, pt.y, GlobalMouseEvent.RIGHT, isCtrlDown, isShiftDown, isAltDown);
                             fireMouseReleased(event);
-//                            System.out.println("right button up");
                             break;
                         case MouseHook.WM_MBUTTONUP:
                             event = new GlobalMouseEvent(pt.x, pt.y, GlobalMouseEvent.MIDDLE, isCtrlDown, isShiftDown, isAltDown);
                             fireMouseReleased(event);
-//                            System.out.println("middle button up");
                             break;
                         case MouseHook.WM_MOUSEMOVE:
                             event = new GlobalMouseEvent(pt.x, pt.y, GlobalMouseEvent.MIDDLE, isCtrlDown, isShiftDown, isAltDown);
