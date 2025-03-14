@@ -917,13 +917,19 @@ public class Recorder implements nlScript.screenplay.MouseHook.GlobalMouseListen
 	private void record(Event e) {
 		if(ignoreEvents)
 			return;
-		String emission = e.emit();
+		final String emission = e.emit();
 		SwingUtilities.invokeLater(() -> {
-			String text = editor.getText();
-			if(!text.isEmpty() && !text.endsWith("\n"))
-				text += "\n";
-			text += (emission + "\n");
-			editor.getTextArea().setText(text);
+			String toInsert = emission;
+			int pos = editor.getTextArea().getCaretPosition();
+			StringBuilder text = new StringBuilder(editor.getText());
+			if(pos > 0 && text.charAt(pos - 1) != '\n')
+				toInsert = "\n" + toInsert;
+			if(!toInsert.endsWith("\n"))
+				toInsert = toInsert + "\n";
+
+			text.insert(pos, toInsert);
+			editor.getTextArea().setText(text.toString());
+			editor.getTextArea().setCaretPosition(pos + toInsert.length());
 		});
 	}
 
