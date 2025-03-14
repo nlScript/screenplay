@@ -90,7 +90,7 @@ public class Main implements AutoCloseable {
 
     private Mode mode = RUN;
 
-    private final int autoDelay = 1500;
+    private int autoDelay = 1500;
 
     private boolean selectedLinesOnly = false;
 
@@ -546,6 +546,7 @@ public class Main implements AutoCloseable {
                     i += nKeystrokes - 1; // -1 because i is anyway incremented by 1
                 }
             }
+            robot.delay(autoDelay);
             return null;
         });
 
@@ -566,6 +567,12 @@ public class Main implements AutoCloseable {
             KeyStroke ks = (KeyStroke) e.evaluate("key");
             robot.releaseKey(ks);
             robot.delay(autoDelay);
+            return null;
+        });
+
+        parser.defineSentence("Set the automatic delay between instructions to {delay:float} second(s).", e -> {
+            double delay = (Double) e.evaluate("delay");
+            this.autoDelay = (int) Math.round(1000 * delay);
             return null;
         });
 
@@ -805,6 +812,7 @@ public class Main implements AutoCloseable {
         editor.getFrame().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         ImageIcon appIcon = new ImageIcon(this.getClass().getResource("/nlScript/screenplay/screenplay.png"));
         editor.getFrame().setIconImage(appIcon.getImage().getScaledInstance(48, 48, Image.SCALE_SMOOTH));
+
         editor.setOnRun(e -> {
             selectedLinesOnly = false;
             mode = RUN;
