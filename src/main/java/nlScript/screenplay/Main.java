@@ -194,7 +194,7 @@ public class Main implements AutoCloseable {
         final List<Replacement> replacements = new ArrayList<>();
 
         Parser parser = new Parser();
-        editor = new ACEditor(parser);
+        editor = new Editor(parser);
 
 
 //        parser.defineType("goal", "{ }{purpose:[^.]:+}.", DefaultParsedNode::getParsedString, true);
@@ -840,7 +840,7 @@ public class Main implements AutoCloseable {
             SwingUtilities.invokeLater(() -> editor.getTextArea().setText(script.toString()));
         });
 
-        JMenuBar menuBar = new JMenuBar();
+        JMenuBar menuBar = editor.getFrame().getJMenuBar();
         JMenu menu = new JMenu("Run");
         JMenuItem mi = new JMenuItem("Run");
         mi.addActionListener(l -> {
